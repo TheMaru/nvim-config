@@ -42,7 +42,7 @@ return {
       function()
         Snacks.bufdelete.delete()
       end,
-      desc = 'Delete current Buffer',
+      desc = 'Close current Buffer',
     },
   },
 }

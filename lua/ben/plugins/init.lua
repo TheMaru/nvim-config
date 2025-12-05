@@ -19,6 +19,8 @@ return {
   require 'ben.plugins.fugitive',
   require 'ben.plugins.bufferline',
   require 'ben.plugins.rustaceanvim',
+  require 'ben.plugins.copilot',
+  require 'ben.plugins.code-companion',
   {
     'NMAC427/guess-indent.nvim',
   },

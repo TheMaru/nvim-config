@@ -81,4 +81,56 @@ return { -- Autocompletion
     -- Shows a signature help window while you type arguments for a function
     signature = { enabled = true },
   },
+  config = function(_, _)
+    -- safe requires
+    local ok_blink, blink = pcall(require, 'blink.cmp')
+    local ok_luasnip, luasnip = pcall(require, 'luasnip')
+    if not ok_blink then
+      return
+    end
+    if not ok_luasnip then
+      luasnip = nil
+    end
+
+    local cmp_api = blink.api or blink -- blink.cmp exposes api functions on blink.api or top-level
+
+    local function has_words_before()
+      local col = vim.fn.col '.' - 1
+      return col > 0 and vim.fn.getline('.'):sub(col, col):match '%s' == nil
+    end
+
+    local opts = { noremap = true, silent = true }
+
+    vim.keymap.set({ 'i', 's' }, '<Tab>', function()
+      -- completion menu visible?
+      if cmp_api.visible and cmp_api.visible() then
+        return cmp_api.select_next_item() or ''
+      end
+
+      -- LuaSnip expand or jump?
+      if ok_luasnip and luasnip.expand_or_jumpable and luasnip.expand_or_jumpable() then
+        return luasnip.expand_or_jump()
+      end
+
+      -- If there's text before cursor, trigger blink completion (optional)
+      if has_words_before() and cmp_api.open then
+        return cmp_api.open()
+      end
+
+      -- fallback: insert a real tab (respects expandtab setting)
+      return vim.api.nvim_replace_termcodes('<Tab>', true, false, true)
+    end, vim.tbl_extend('force', opts, { expr = true }))
+
+    vim.keymap.set({ 'i', 's' }, '<S-Tab>', function()
+      if cmp_api.visible and cmp_api.visible() then
+        return cmp_api.select_prev_item() or ''
+      end
+
+      if ok_luasnip and luasnip.jumpable and luasnip.jumpable(-1) then
+        return luasnip.jump(-1)
+      end
+
+      return vim.api.nvim_replace_termcodes('<S-Tab>', true, false, true)
+    end, vim.tbl_extend('force', opts, { expr = true }))
+  end,
 }

@@ -21,7 +21,13 @@ return {
           'markdown_inline',
           'javascript',
           'typescript',
+          'tsx',
           'rust',
+          'yaml',
+          'vue',
+          'css',
+          'scss',
+          'python',
         },
 
         -- Install parsers synchronously (only applied to `ensure_installed`)
