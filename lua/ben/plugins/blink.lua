@@ -1,6 +1,7 @@
 return { -- Autocompletion
   'saghen/blink.cmp',
   version = '1.*',
+  build = 'cargo build --release',
   dependencies = {
     -- Snippet Engine
     {

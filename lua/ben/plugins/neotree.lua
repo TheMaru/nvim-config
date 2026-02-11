@@ -89,11 +89,11 @@ return {
     event_handlers = {
       {
         event = 'file_open_requested',
-        handler = function()
-          -- auto close
-          -- vim.cmd("Neotree close")
-          -- OR
-          require('neo-tree.command').execute { action = 'close' }
+        handler = function(args)
+          -- only auto-close when in sidebar/float, not when position=current
+          if args.state and args.state.current_position ~= 'current' then
+            require('neo-tree.command').execute { action = 'close' }
+          end
         end,
       },
       {
