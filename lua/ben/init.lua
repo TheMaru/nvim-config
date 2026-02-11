@@ -39,6 +39,18 @@ vim.opt.undofile = true
 
 vim.opt.incsearch = true
 vim.opt.colorcolumn = '120'
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = { 'javascript', 'go', 'typescript', 'python' },
+  callback = function()
+    vim.wo.colorcolumn = '120'
+  end,
+})
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = { 'markdown', 'yaml' },
+  callback = function()
+    vim.wo.colorcolumn = '80'
+  end,
+})
 
 vim.o.scrolloff = 10
 
