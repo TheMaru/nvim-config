@@ -21,6 +21,7 @@ return {
   require 'ben.plugins.rustaceanvim',
   require 'ben.plugins.copilot',
   require 'ben.plugins.code-companion',
+  require 'ben.plugins.diffview',
   {
     'NMAC427/guess-indent.nvim',
   },
