@@ -18,7 +18,7 @@ return {
       -- Disable "format_on_save lsp_fallback" for languages that don't
       -- have a well standardized coding style. You can add additional
       -- languages here or re-enable it for the disabled ones.
-      local disable_filetypes = { c = true, cpp = true }
+      local disable_filetypes = {}
       if disable_filetypes[vim.bo[bufnr].filetype] then
         return nil
       else
@@ -29,25 +29,35 @@ return {
       end
     end,
     formatters = {
+      clang_format = {
+        prepend_args = { '--style=file', '--fallback-style=Google' },
+      },
       stylelint = {
         command = 'stylelint',
         args = { '--fix', '--stdin-filename', '$FILENAME', '--stdin' },
         -- Conform automatically pipes buffer content to stdin
       },
+      eslint_auto = function()
+        local name = vim.fn.executable('eslint_d') == 1 and 'eslint_d' or 'eslint'
+        return require('conform.formatters.' .. name)
+      end,
+      prettier_auto = function()
+        local name = vim.fn.executable('prettierd') == 1 and 'prettierd' or 'prettier'
+        return require('conform.formatters.' .. name)
+      end,
     },
     formatters_by_ft = {
       lua = { 'stylua' },
-      -- Conform can also run multiple formatters sequentially
       python = { 'isort', 'black' },
-      --
-      -- You can use 'stop_after_first' to run the first available formatter from the list
-      javascript = { 'prettierd', 'prettier', stop_after_first = true },
-      javascriptreact = { 'prettierd', 'prettier', stop_after_first = true },
-      typescript = { 'prettierd', 'prettier', stop_after_first = true },
-      typescriptreact = { 'prettierd', 'prettier', stop_after_first = true },
+      javascript = { 'eslint_auto', 'prettier_auto' },
+      javascriptreact = { 'eslint_auto', 'prettier_auto' },
+      typescript = { 'eslint_auto', 'prettier_auto' },
+      typescriptreact = { 'eslint_auto', 'prettier_auto' },
       css = { 'prettier', 'stylelint' },
       scss = { 'prettier', 'stylelint' },
       rust = { 'rustfmt', lsp_format = 'fallback' },
+      c = { 'clang_format' },
+      cpp = { 'clang_format' },
     },
   },
 }
