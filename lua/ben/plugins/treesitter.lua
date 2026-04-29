@@ -61,6 +61,20 @@ return {
           additional_vim_regex_highlighting = false,
         },
       }
+
+      -- nvim-treesitter registers set-lang-from-info-string! with all=false,
+      -- but nvim 0.12.2 always passes captures as TSNode[] — override with all=true
+      local non_filetype_aliases = { ex = "elixir", pl = "perl", sh = "bash", uxn = "uxntal", ts = "typescript" }
+      require("vim.treesitter.query").add_directive("set-lang-from-info-string!", function(match, _, bufnr, pred, metadata)
+        local nodes = match[pred[2]]
+        if not nodes then return end
+        local node = type(nodes) == "table" and nodes[1] or nodes
+        if not node then return end
+        local ok, text = pcall(vim.treesitter.get_node_text, node, bufnr)
+        if not ok or not text then return end
+        text = text:lower()
+        metadata["injection.language"] = vim.filetype.match({ filename = "a." .. text }) or non_filetype_aliases[text] or text
+      end, { force = true, all = true })
     end,
   },
 }
